@@ -4,6 +4,7 @@ import uuid
 from typing import Optional, Dict
 from lalamove.auth import get_auth_token
 from lalamove.constants import ENDPOINTS, MARKETS
+from lalamove.utils import convert_keys_to_camel_case
 
 DEV_BASE_URL = "https://rest.sandbox.lalamove.com/v3/quotations"
 PROD_BASE_URL = "https://rest.lalamove.com/v3/quotations"
@@ -30,6 +31,8 @@ class APIClient:
 
         if method.upper() not in ENDPOINTS.get(endpoint, []):
             raise ValueError(f"Invalid method for endpoint {endpoint}: {method}")
+
+        data = convert_keys_to_camel_case(data)
 
         token = get_auth_token(
             method.upper(), endpoint, json.load(data), self.api_key, self.api_secret
