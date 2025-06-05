@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
 from lalamove.client import APIClient
-from lalamove.constants import Languages
+from lalamove.constants import Language
 
 
 class QuotationCoord(BaseModel):
@@ -26,7 +26,7 @@ class QuotationItem(BaseModel):
 class QuotationData(BaseModel):
     service_type: str
     stops: List[QuotationStop]
-    language: Languages
+    language: Language
     schedule_at: Optional[datetime]
     special_requests: Optional[List[str]]
     is_route_optimized: Optional[bool] = False

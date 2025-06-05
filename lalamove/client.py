@@ -3,7 +3,7 @@ import json
 import uuid
 from typing import Optional, Dict
 from lalamove.auth import get_auth_token
-from lalamove.constants import ENDPOINTS, MARKETS
+from lalamove.constants import Market
 from lalamove.utils import convert_keys_to_camel_case
 from lalamove.errors import (
     BadRequest,
@@ -28,7 +28,7 @@ PROD_BASE_URL = "https://rest.lalamove.com/v3/quotations"
 
 class APIClient:
     def __init__(
-        self, api_key: str, api_secret: str, market: str, sandbox: bool = False
+        self, api_key: str, api_secret: str, market: Market, sandbox: bool = False
     ):
         self.api_key = api_key
         self.api_secret = api_secret
@@ -36,23 +36,15 @@ class APIClient:
 
         self.base_url = DEV_BASE_URL if sandbox else PROD_BASE_URL
 
-        if market in MARKETS:
-            self.market = market
-        else:
-            raise ValueError(f"Invalid market: {market}")
-
     def _make_request(self, method: str, endpoint: str, data: Optional[Dict] = None):
-        if endpoint not in ENDPOINTS:
-            raise ValueError(f"Invalid endpoint: {endpoint}")
-
-        methods = ENDPOINTS.get(endpoint)
-        if not methods or method.upper() not in methods:
-            raise ValueError(f"Invalid method for endpoint {endpoint}: {method}")
-
         data = convert_keys_to_camel_case(data)
 
         token = get_auth_token(
-            method.upper(), endpoint, json.dumps(data), self.api_key, self.api_secret
+            method.upper(),
+            endpoint,
+            json.dumps(data or {}),
+            self.api_key,
+            self.api_secret,
         )
 
         headers = {
@@ -121,6 +113,10 @@ class APIClient:
                             )
                         case "ERR_INVALID_QUOTATION_ID":
                             raise InvalidQuotationID(
+                                message, request=error.request, response=error.response
+                            )
+                        case _:
+                            raise UnprocessableEntity(
                                 message, request=error.request, response=error.response
                             )
                 case 429:

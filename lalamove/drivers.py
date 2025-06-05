@@ -1,4 +1,3 @@
-import httpx
 from datetime import datetime
 from lalamove.client import APIClient
 from pydantic import BaseModel
@@ -31,7 +30,7 @@ class Driver:
         response = self.client.make_request(
             "GET", f"orders/{order_id}/drivers/{driver_id}"
         )
-        return DriverResponse.modal_validate({"data": response})
+        return DriverResponse.model_validate({"data": response})
 
     def change(self, order_id: str, driver_id: str) -> None:
         self.client.make_request("DELETE", f"orders/{order_id}/drivers/{driver_id}")
