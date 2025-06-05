@@ -1,4 +1,3 @@
-import httpx
 from lalamove.client import APIClient
 from lalamove.drivers import Driver
 from datetime import datetime
@@ -23,8 +22,8 @@ class OrderData(BaseModel):
     sender: OrderSender
     recipients: List[OrderDeliveryDetails]
     is_pod_enabled: Optional[bool] = False
-    partner: Optional[str]
-    metadata: Optional[Dict]
+    partner: Optional[str] = None
+    metadata: Optional[Dict[str, str]] = None
 
 
 class OrderBody(BaseModel):
@@ -57,7 +56,7 @@ class OrderPOD(BaseModel):
     delivered_at: datetime
 
 
-class OrderStop:
+class OrderStop(BaseModel):
     coordinates: OrderCoord
     address: str
     name: str
@@ -115,7 +114,7 @@ class Order:
         data = OrderPriorityFeeBody(
             data=OrderPriorityFeeData(priority_fee=priority_fee)
         )
-        response = self.client.make_requests(
+        response = self.client.make_request(
             "POST", f"orders/{order_id}/priority-fee", data
         )
         return OrderResponse.model_validate({"data": response})
@@ -125,6 +124,5 @@ class Order:
         response = self.client.make_request("PATCH", f"orders/{order_id}", data)
         return OrderResponse.model_validate({"data": response})
 
-    def cancel(self, order_id: str) -> bool:
+    def cancel(self, order_id: str) -> None:
         self.client.make_request("DELETE", f"orders/{order_id}")
-        return True
