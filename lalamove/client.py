@@ -127,6 +127,10 @@ class APIClient:
                             raise InvalidQuotationID(
                                 message, request=error.request, response=error.response
                             )
+                        case _:
+                            raise UnprocessableEntity(
+                                message, request=error.request, response=error.response
+                            )
                 case 429:
                     raise TooManyRequests(
                         "Too Many Requests",
