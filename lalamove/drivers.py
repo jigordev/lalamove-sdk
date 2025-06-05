@@ -33,6 +33,5 @@ class Driver:
         )
         return DriverResponse.modal_validate({"data": response})
 
-    def change(self, order_id: str, driver_id: str) -> DriverResponse:
+    def change(self, order_id: str, driver_id: str) -> None:
         self.client.make_request("DELETE", f"orders/{order_id}/drivers/{driver_id}")
-        return True
