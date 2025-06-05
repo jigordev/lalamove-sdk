@@ -31,15 +31,8 @@ class Driver:
         response = self.client.make_request(
             "GET", f"orders/{order_id}/drivers/{driver_id}"
         )
-        return DriverResponse.modal_validate({"data": response.json()})
+        return DriverResponse.modal_validate({"data": response})
 
     def change(self, order_id: str, driver_id: str) -> DriverResponse:
-        response = self.client.make_request(
-            "DELETE", f"orders/{order_id}/drivers/{driver_id}"
-        )
-
-        try:
-            response.raise_for_status()
-            return True
-        except httpx.HttpStatusError:
-            return False
+        self.client.make_request("DELETE", f"orders/{order_id}/drivers/{driver_id}")
+        return True

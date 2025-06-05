@@ -105,11 +105,11 @@ class Order:
     def place(self, data: OrderData) -> OrderResponse:
         data = OrderBody(data=data)
         response = self.client.make_request("POST", "orders", data.model_dump())
-        return OrderResponse.model_validate({"data": response.json()})
+        return OrderResponse.model_validate({"data": response})
 
     def get_details(self, order_id: str) -> OrderResponse:
         response = self.client.make_request("GET", f"orders/{order_id}")
-        return OrderResponse.model_validate({"data": response.json()})
+        return OrderResponse.model_validate({"data": response})
 
     def add_priority_fee(self, order_id: str, priority_fee: str) -> OrderResponse:
         data = OrderPriorityFeeBody(
@@ -118,18 +118,13 @@ class Order:
         response = self.client.make_requests(
             "POST", f"orders/{order_id}/priority-fee", data
         )
-        return OrderResponse.model_validate({"data": response.json()})
+        return OrderResponse.model_validate({"data": response})
 
     def edit(self, order_id: str, data: OrderUpdateData) -> OrderResponse:
         data = OrderUpdateBody(data=data)
         response = self.client.make_request("PATCH", f"orders/{order_id}", data)
-        return OrderResponse.model_validate({"data": response.json()})
+        return OrderResponse.model_validate({"data": response})
 
     def cancel(self, order_id: str) -> bool:
-        response = self.client.make_request("DELETE", f"orders/{order_id}")
-
-        try:
-            response.raise_for_status()
-            return True
-        except httpx.HttpStatusError:
-            return False
+        self.client.make_request("DELETE", f"orders/{order_id}")
+        return True
