@@ -25,4 +25,4 @@ class Webhook:
     def set_webhook(self, url: str):
         data = WebhookBody(data=WebhookData(url=url))
         response = self.client.make_request("GET", "webhook", json=data.dump_model())
-        return WebhookResponse.model_validate({"data": response.json()})
+        return WebhookResponse.model_validate({"data": response})

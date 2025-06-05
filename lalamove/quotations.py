@@ -71,8 +71,8 @@ class Quotation:
     def create(self, data: QuotationData) -> QuotationResponse:
         data = QuotationBody(data=data)
         response = self.client.make_request("POST", "quotations", data.model_dump())
-        return QuotationResponse.model_validate({"data": response.json()})
+        return QuotationResponse.model_validate({"data": response})
 
     def get_details(self, quotation_id: str) -> QuotationResponse:
         response = self.client.make_request("GET", f"quotations/{quotation_id}")
-        return QuotationResponse.model_validate({"data": response.json()})
+        return QuotationResponse.model_validate({"data": response})
