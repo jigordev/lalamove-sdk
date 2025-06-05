@@ -52,7 +52,11 @@ class APIClient:
         data = convert_keys_to_camel_case(data)
 
         token = get_auth_token(
-            method.upper(), endpoint, json.dumps(data), self.api_key, self.api_secret
+            method.upper(),
+            endpoint,
+            json.dumps(data or {}),
+            self.api_key,
+            self.api_secret,
         )
 
         headers = {
