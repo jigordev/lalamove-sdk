@@ -1,50 +1,57 @@
-class BadRequest(Exception):
+import httpx
+
+
+class BadRequest(httpx.HTTPStatusError):
     pass  # 400
 
 
-class Unauthorized(Exception):
+class Unauthorized(httpx.HTTPStatusError):
     pass  # 401
 
 
-class PaymentRequired(Exception):
+class PaymentRequired(httpx.HTTPStatusError):
     pass  # 402
 
 
-class Forbidden(Exception):
+class Forbidden(httpx.HTTPStatusError):
     pass  # 403
 
 
-class NotFound(Exception):
+class NotFound(httpx.HTTPStatusError):
     pass  # 404
 
 
-class InsufficientStops(Exception):
+class UnprocessableEntity(httpx.HTTPStatusError):
+    pass
+
+
+class InsufficientStops(httpx.HTTPStatusError):
     pass  # 422
 
 
-class OrderNotFound(Exception):
+class OrderNotFound(httpx.HTTPStatusError):
     pass  # 422
 
 
-class InvalidField(Exception):
+class InvalidField(httpx.HTTPStatusError):
     pass  # 422
 
 
-class MissingField(Exception):
+class MissingField(httpx.HTTPStatusError):
     pass  # 422
 
 
-class TooManyStops(Exception):
+class TooManyStops(httpx.HTTPStatusError):
     pass  # 422
 
 
-class InvalidQuotationID(Exception):
+class InvalidQuotationID(httpx.HTTPStatusError):
     pass  # 422
 
 
-class TooManyRequests(Exception):
+class TooManyRequests(httpx.HTTPStatusError):
     pass  # 429
 
 
-class InternalServerError(Exception):
+class InternalServerError(httpx.HTTPStatusError):
     pass  # 500
