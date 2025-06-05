@@ -11,6 +11,7 @@ from lalamove.errors import (
     PaymentRequired,
     Forbidden,
     NotFound,
+    UnprocessableEntity,
     InsufficientStops,
     OrderNotFound,
     InvalidField,
@@ -44,7 +45,8 @@ class APIClient:
         if endpoint not in ENDPOINTS:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
-        if method.upper() not in ENDPOINTS.get(endpoint, []):
+        methods = ENDPOINTS.get(endpoint)
+        if not methods or method.upper() not in methods:
             raise ValueError(f"Invalid method for endpoint {endpoint}: {method}")
 
         data = convert_keys_to_camel_case(data)
@@ -70,33 +72,68 @@ class APIClient:
             return response.json()
         except httpx.HTTPStatusError as error:
             error_data = error.response.json()
+            message = error_data.get("message")
 
-            match error.status_code:
+            match error.response.status_code:
                 case 400:
-                    raise BadRequest
+                    raise BadRequest(
+                        "Bad Request", request=error.request, response=error.response
+                    )
                 case 401:
-                    raise Unauthorized
+                    raise Unauthorized(
+                        "Unauthorized", request=error.request, response=error.response
+                    )
                 case 402:
-                    raise PaymentRequired
+                    raise PaymentRequired(
+                        "Payment Required",
+                        request=error.request,
+                        response=error.response,
+                    )
                 case 403:
-                    raise Forbidden
+                    raise Forbidden(
+                        "Forbidden", request=error.request, response=error.response
+                    )
                 case 404:
-                    raise NotFound
-                case 422 if error_data.get("message") == "ERR_INSUFFICIENT_STOPS":
-                    raise InsufficientStops
-                case 422 if error_data.get("message") == "ERR_ORDER_NOT_FOUND":
-                    raise OrderNotFound
-                case 422 if error_data.get("message") == "ERR_INVALID_FIELD":
-                    raise InvalidField
-                case 422 if error_data.get("message") == "ERR_MISSING_FIELD":
-                    raise MissingField
-                case 422 if error_data.get("message") == "ERR_TOO_MANY_STOPS":
-                    raise TooManyStops
-                case 422 if error_data.get("message") == "ERR_INVALID_QUOTATION_ID":
-                    raise InvalidQuotationID
+                    raise NotFound(
+                        "Not Found", request=error.request, response=error.response
+                    )
+                case 422:
+                    match message:
+                        case "ERR_INSUFFICIENT_STOPS":
+                            raise InsufficientStops(
+                                message, request=error.request, response=error.response
+                            )
+                        case "ERR_ORDER_NOT_FOUND":
+                            raise OrderNotFound(
+                                message, request=error.request, response=error.response
+                            )
+                        case "ERR_INVALID_FIELD":
+                            raise InvalidField(
+                                message, request=error.request, response=error.response
+                            )
+                        case "ERR_MISSING_FIELD":
+                            raise MissingField(
+                                message, request=error.request, response=error.response
+                            )
+                        case "ERR_TOO_MANY_STOPS":
+                            raise TooManyStops(
+                                message, request=error.request, response=error.response
+                            )
+                        case "ERR_INVALID_QUOTATION_ID":
+                            raise InvalidQuotationID(
+                                message, request=error.request, response=error.response
+                            )
                 case 429:
-                    raise TooManyRequests
+                    raise TooManyRequests(
+                        "Too Many Requests",
+                        request=error.request,
+                        response=error.response,
+                    )
                 case 500:
-                    raise InternalServerError
+                    raise InternalServerError(
+                        "Internal Server Error",
+                        request=error.request,
+                        response=error.response,
+                    )
                 case _:
                     raise error
