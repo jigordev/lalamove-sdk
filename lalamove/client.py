@@ -48,7 +48,7 @@ class APIClient:
         )
 
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"hmac {token}",
             "Market": self.market,
             "Request-ID": str(uuid.uuid4()),
         }
