@@ -33,7 +33,7 @@ class APIClient:
         self.api_key = api_key
         self.api_secret = api_secret
         self.sandbox = sandbox
-
+        self.market = market
         self.base_url = DEV_BASE_URL if sandbox else PROD_BASE_URL
 
     def _make_request(self, method: str, endpoint: str, data: Optional[Dict] = None):
