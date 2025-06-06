@@ -22,8 +22,8 @@ from lalamove.errors import (
     InternalServerError,
 )
 
-DEV_BASE_URL = "https://rest.sandbox.lalamove.com/v3/quotations"
-PROD_BASE_URL = "https://rest.lalamove.com/v3/quotations"
+DEV_BASE_URL = "https://rest.sandbox.lalamove.com/v3/"
+PROD_BASE_URL = "https://rest.lalamove.com/v3/"
 
 
 class APIClient:
