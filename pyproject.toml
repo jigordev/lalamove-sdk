@@ -1,7 +1,7 @@
 [project]
 name = "lalamove-sdk"
 version = "0.1.0"
-description = "Add your description here"
+description = "Unofficial sdk for lalamove delivery api integration."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
